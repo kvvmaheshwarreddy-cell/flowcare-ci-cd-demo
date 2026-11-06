@@ -1,0 +1,23 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Staff management</h1><p class="page-sub mb-0">{{vm.can ? 'Toggle duty and reassign departments.' : 'Only administrators and resource managers can make changes.'}}</p></div>
+  <button class="btn btn-primary" ng-if="vm.can" ng-click="vm.showForm = !vm.showForm"><i class="bi bi-plus"></i> Add staff</button>
+</div>
+<form class="panel p-3 mb-3" ng-if="vm.showForm" ng-submit="vm.add()">
+  <div class="row g-2">
+    <div class="col-md-4"><label class="form-label small">Full name</label><input class="form-control" ng-model="vm.form.fullName" required /></div>
+    <div class="col-md-2"><label class="form-label small">Role</label><select class="form-select" ng-model="vm.form.role"><option>doctor</option><option>nurse</option><option>technician</option><option>support</option></select></div>
+    <div class="col-md-2"><label class="form-label small">Shift</label><select class="form-select" ng-model="vm.form.shift"><option>day</option><option>evening</option><option>night</option></select></div>
+    <div class="col-md-4"><label class="form-label small">Department</label><select class="form-select" ng-model="vm.form.department" ng-options="d._id as d.name for d in vm.departments"></select></div>
+  </div>
+  <button class="btn btn-primary mt-3">Save</button>
+</form>
+<div class="panel table-responsive">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>Name</th><th>Role</th><th>Shift</th><th>Department</th><th>On duty</th></tr></thead>
+    <tbody><tr ng-repeat="s in vm.staff">
+      <td class="fw-medium">{{s.fullName}}</td><td><fc-pill value="normal" label="{{s.role}}"></fc-pill></td><td class="text-capitalize">{{s.shift}}</td>
+      <td><select class="form-select form-select-sm" style="max-width:200px" ng-disabled="!vm.can" ng-model="s.deptId" ng-change="vm.update(s, {department: s.deptId})" ng-options="d._id as d.name for d in vm.departments"></select></td>
+      <td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" ng-disabled="!vm.can" ng-model="s.onDuty" ng-change="vm.update(s, {onDuty: s.onDuty})" /></div></td>
+    </tr></tbody>
+  </table>
+</div>

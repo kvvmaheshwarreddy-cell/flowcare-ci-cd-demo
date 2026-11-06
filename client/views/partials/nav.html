@@ -1,0 +1,36 @@
+<div class="nav-section">Hospital operations</div>
+<a class="side-link" href="/dashboard" ng-class="{active: shell.isActive('/dashboard')}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+<a class="side-link" href="/patients" ng-class="{active: shell.isActive('/patients')}"><i class="bi bi-person-lines-fill"></i> Patient flow</a>
+<a class="side-link" href="/beds" ng-class="{active: shell.isActive('/beds')}"><i class="bi bi-hospital"></i> Beds and wards</a>
+<a class="side-link" href="/staff" ng-class="{active: shell.isActive('/staff')}"><i class="bi bi-people"></i> Staff management</a>
+
+<div ng-if="shell.auth.can('inventory:read')">
+  <div class="nav-section">Hospital resources</div>
+  <a class="side-link" href="/resources" ng-class="{active: shell.isActive('/resources')}"><i class="bi bi-grid"></i> Resource overview</a>
+  <a class="side-link" href="/oxygen" ng-class="{active: shell.isActive('/oxygen')}"><i class="bi bi-wind"></i> Oxygen management</a>
+  <a class="side-link" href="/inventory?category=medicines"><i class="bi bi-capsule"></i> Medicines</a>
+  <a class="side-link" href="/inventory?category=iv_fluids"><i class="bi bi-droplet"></i> IV fluids and consumables</a>
+  <a class="side-link" href="/inventory?category=ppe"><i class="bi bi-shield-plus"></i> PPE and infection control</a>
+  <a class="side-link" href="/equipment" ng-class="{active: shell.isActive('/equipment')}"><i class="bi bi-heart-pulse"></i> Ventilators and equipment</a>
+
+  <div class="nav-section">Inventory and procurement</div>
+  <a class="side-link" href="/inventory" ng-class="{active: shell.isActive('/inventory')}"><i class="bi bi-box-seam"></i> All inventory</a>
+  <a class="side-link" href="/inventory/transactions" ng-class="{active: shell.isActive('/inventory/transactions')}"><i class="bi bi-arrow-left-right"></i> Transactions</a>
+  <a class="side-link" href="/inventory/low-stock" ng-class="{active: shell.isActive('/inventory/low-stock')}"><i class="bi bi-exclamation-diamond"></i> Low stock</a>
+  <a class="side-link" href="/inventory/expiring" ng-class="{active: shell.isActive('/inventory/expiring')}"><i class="bi bi-hourglass-split"></i> Expiring inventory</a>
+  <a class="side-link" href="/procurement" ng-class="{active: shell.isActive('/procurement')}"><i class="bi bi-cart"></i> Purchase orders</a>
+</div>
+
+<div class="nav-section">AI and analytics</div>
+<a class="side-link" href="/forecast" ng-class="{active: shell.isActive('/forecast')}"><i class="bi bi-graph-up-arrow"></i> Patient demand and bottlenecks</a>
+<div ng-if="shell.auth.can('inventory:read')">
+  <a class="side-link" href="/resource-forecasts" ng-class="{active: shell.isActive('/resource-forecasts')}"><i class="bi bi-cpu"></i> Resource forecasts</a>
+  <a class="side-link" href="/alerts" ng-class="{active: shell.isActive('/alerts')}"><i class="bi bi-bell"></i> Alerts</a>
+  <a class="side-link" href="/reports" ng-class="{active: shell.isActive('/reports')}"><i class="bi bi-file-earmark-bar-graph"></i> Reports</a>
+</div>
+
+<div ng-if="shell.auth.can('users:manage')">
+  <div class="nav-section">Administration</div>
+  <a class="side-link" href="/users" ng-class="{active: shell.isActive('/users')}"><i class="bi bi-person-gear"></i> User management</a>
+  <a class="side-link" href="/audit" ng-class="{active: shell.isActive('/audit')}"><i class="bi bi-journal-text"></i> Audit logs</a>
+</div>

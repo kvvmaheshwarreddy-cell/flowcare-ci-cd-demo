@@ -1,0 +1,14 @@
+{
+  "name": "flowcare-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FlowCare — AI-Based Hospital Resource Allocation and Patient Flow Optimization",
+  "scripts": {
+    "start": "npm --prefix server start",
+    "dev": "npm --prefix server run dev",
+    "dev:mem": "npm --prefix server run dev:mem",
+    "seed": "npm --prefix server run seed",
+    "test": "npm --prefix server test",
+    "install:server": "npm --prefix server install"
+  }
+}

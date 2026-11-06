@@ -1,0 +1,11 @@
+<h1 class="h2">Audit logs</h1>
+<p class="page-sub">The 200 most recent significant actions.</p>
+<div class="panel table-responsive">
+  <table class="table table-sm mb-0">
+    <thead><tr><th>When</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th></tr></thead>
+    <tbody><tr ng-repeat="l in vm.logs">
+      <td class="small">{{l.at | date:'short'}}</td><td>{{l.userName}}</td><td class="num small">{{l.action}}</td><td class="small">{{l.entity}}</td>
+      <td class="small page-sub"><code>{{l.details | json:0}}</code></td>
+    </tr></tbody>
+  </table>
+</div>

@@ -1,0 +1,14 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Stock report</h1><p class="page-sub mb-0">Generated {{vm.r.generatedAt | date:'medium'}} · {{vm.r.openPurchaseOrders}} open purchase orders</p></div>
+  <button class="btn btn-outline-primary" ng-click="vm.csv()" ng-disabled="!vm.r.rows.length"><i class="bi bi-download"></i> Download CSV</button>
+</div>
+<div class="panel table-responsive">
+  <table class="table table-sm mb-0">
+    <thead><tr><th>SKU</th><th>Item</th><th>Category</th><th>Dept</th><th>On hand</th><th>Usable</th><th>Unusable</th><th>Reserved</th><th>Available</th><th>Avg/day</th><th>Coverage</th><th>Reorder</th><th>Status</th></tr></thead>
+    <tbody><tr ng-repeat="r in vm.r.rows">
+      <td class="small num">{{r.sku}}</td><td>{{r.name}}</td><td>{{r.category | humanize}}</td><td>{{r.department}}</td>
+      <td class="num">{{r.onHand}}</td><td class="num">{{r.usable}}</td><td class="num">{{r.unusable}}</td><td class="num">{{r.reserved}}</td><td class="num">{{r.available}}</td>
+      <td class="num">{{r.avgDaily}}</td><td class="num">{{r.coverageDays === null ? '—' : r.coverageDays}}</td><td class="num">{{r.reorderQuantity}}</td><td><fc-pill value="{{r.status}}"></fc-pill></td>
+    </tr></tbody>
+  </table>
+</div>

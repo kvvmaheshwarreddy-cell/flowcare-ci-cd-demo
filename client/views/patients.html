@@ -1,0 +1,39 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Patient flow</h1><p class="page-sub mb-0">Queue ordered by priority, then arrival time.</p></div>
+  <div class="d-flex gap-2">
+    <select class="form-select" ng-model="vm.filter.department" ng-change="vm.load()" ng-options="d._id as d.name for d in vm.departments"><option value="">All departments</option></select>
+    <select class="form-select" ng-model="vm.filter.status" ng-change="vm.load()"><option value="">Active</option><option value="all">Include discharged</option></select>
+    <button class="btn btn-primary text-nowrap" ng-if="vm.can" ng-click="vm.showForm = !vm.showForm"><i class="bi bi-plus"></i> Register patient</button>
+  </div>
+</div>
+
+<form class="panel p-3 mb-3" ng-if="vm.showForm" ng-submit="vm.register()">
+  <div class="row g-2">
+    <div class="col-md-4"><label class="form-label small">Full name</label><input class="form-control" ng-model="vm.form.fullName" required /></div>
+    <div class="col-md-1"><label class="form-label small">Age</label><input class="form-control" type="number" min="0" ng-model="vm.form.age" /></div>
+    <div class="col-md-3"><label class="form-label small">Complaint</label><input class="form-control" ng-model="vm.form.complaint" /></div>
+    <div class="col-md-2"><label class="form-label small">Department</label><select class="form-select" ng-model="vm.form.department" required ng-options="d._id as d.name for d in vm.departments"></select></div>
+    <div class="col-md-2"><label class="form-label small">Priority</label><select class="form-select" ng-model="vm.form.priority"><option>critical</option><option>urgent</option><option>normal</option><option>low</option></select></div>
+  </div>
+  <button class="btn btn-primary mt-3">Add to queue</button>
+</form>
+
+<div class="panel table-responsive">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>Patient</th><th>Department</th><th>Priority</th><th>Status</th><th>Waiting</th><th>Bed</th><th></th></tr></thead>
+    <tbody>
+      <tr ng-repeat="p in vm.patients">
+        <td><div class="fw-medium">{{p.fullName}}</div><div class="small page-sub">{{p.age}} yrs · {{p.complaint}}</div></td>
+        <td>{{p.department.name}}</td><td><fc-pill value="{{p.priority}}"></fc-pill></td><td><fc-pill value="{{p.status}}"></fc-pill></td>
+        <td class="num">{{p.arrivedAt | minutesAgo}}</td><td>{{p.bed.label || '—'}}</td>
+        <td class="text-end text-nowrap" ng-if="vm.can && p.status !== 'discharged'">
+          <button class="btn btn-sm btn-outline-primary" ng-if="p.status === 'waiting'" ng-click="vm.setStatus(p, 'in_consultation')">Start consult</button>
+          <button class="btn btn-sm btn-outline-primary" ng-if="p.status !== 'admitted'" ng-click="vm.setStatus(p, 'admitted')">Admit</button>
+          <button class="btn btn-sm btn-outline-secondary" ng-click="vm.setStatus(p, 'discharged')">Discharge</button>
+        </td>
+        <td ng-if="!vm.can || p.status === 'discharged'"></td>
+      </tr>
+      <tr ng-if="!vm.patients.length"><td colspan="7" class="text-center py-4 page-sub">No patients.</td></tr>
+    </tbody>
+  </table>
+</div>

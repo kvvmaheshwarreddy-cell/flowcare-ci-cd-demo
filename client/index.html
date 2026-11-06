@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" ng-app="flowcare">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FlowCare — Hospital Operations</title>
+  <base href="/" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body ng-controller="ShellCtrl as shell">
+  <div ng-if="!shell.auth.user()" ng-view></div>
+
+  <div ng-if="shell.auth.user()" class="d-flex app-shell">
+    <aside class="sidebar d-none d-lg-flex flex-column">
+      <div class="brand"><span class="brand-mark">+</span> FlowCare</div>
+      <nav class="mt-3 flex-grow-1 overflow-auto" ng-include="'views/partials/nav.html'"></nav>
+      <div class="sidebar-user">
+        <div class="small fw-semibold">{{shell.auth.user().name}}</div>
+        <div class="small opacity-75">{{shell.roleLabel(shell.auth.user().role)}}</div>
+        <button class="btn btn-sm btn-outline-light mt-2 w-100" ng-click="shell.logout()"><i class="bi bi-box-arrow-left"></i> Sign out</button>
+      </div>
+    </aside>
+
+    <div class="flex-grow-1 min-w-0">
+      <nav class="navbar sidebar d-lg-none px-3">
+        <span class="brand"><span class="brand-mark">+</span> FlowCare</span>
+        <button class="btn btn-sm btn-outline-light" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"><i class="bi bi-list"></i></button>
+      </nav>
+      <div class="offcanvas offcanvas-start sidebar" id="mobileNav">
+        <div class="offcanvas-body" ng-include="'views/partials/nav.html'"></div>
+        <div class="p-3"><button class="btn btn-sm btn-outline-light w-100" ng-click="shell.logout()">Sign out</button></div>
+      </div>
+      <main class="p-3 p-md-4 p-xl-5">
+        <div class="alert alert-danger" ng-if="shell.error">{{shell.error}} <button class="btn-close float-end" ng-click="shell.error=null"></button></div>
+        <div ng-view></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers/ops.js"></script>
+  <script src="js/controllers/resources.js"></script>
+  <script src="js/controllers/admin.js"></script>
+</body>
+</html>

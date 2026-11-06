@@ -1,0 +1,48 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Ventilators and medical equipment</h1><p class="page-sub mb-0">Only available units can be allocated. Maintenance history is kept.</p></div>
+  <button class="btn btn-primary" ng-if="vm.canWrite" ng-click="vm.showForm = !vm.showForm"><i class="bi bi-plus"></i> Register equipment</button>
+</div>
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <select class="form-select w-auto" ng-model="vm.filter.type" ng-change="vm.load()"><option value="">All types</option><option ng-repeat="t in vm.types" value="{{t}}">{{t | humanize}}</option></select>
+  <select class="form-select w-auto" ng-model="vm.filter.status" ng-change="vm.load()"><option value="">Any status</option><option>available</option><option value="in_use">in use</option><option>maintenance</option><option value="out_of_service">out of service</option></select>
+</div>
+<form class="panel p-3 mb-3" ng-if="vm.showForm" ng-submit="vm.add()">
+  <div class="row g-2">
+    <div class="col-md-2"><input class="form-control" ng-model="vm.form.assetTag" placeholder="Asset tag" required /></div>
+    <div class="col-md-4"><input class="form-control" ng-model="vm.form.name" placeholder="Name / model" required /></div>
+    <div class="col-md-2"><select class="form-select" ng-model="vm.form.type"><option ng-repeat="t in vm.types" value="{{t}}">{{t | humanize}}</option></select></div>
+    <div class="col-md-2"><select class="form-select" ng-model="vm.form.department" ng-options="d._id as d.name for d in vm.departments"></select></div>
+    <div class="col-md-2"><button class="btn btn-primary w-100">Save</button></div>
+  </div>
+</form>
+<div class="row g-3">
+  <div ng-class="vm.selected ? 'col-xl-8' : 'col-12'">
+    <div class="panel table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead><tr><th>Asset</th><th>Type</th><th>Department</th><th>Status</th><th>Next maintenance</th><th></th></tr></thead>
+        <tbody><tr ng-repeat="e in vm.list">
+          <td><a href="" ng-click="vm.history(e)" class="fw-medium">{{e.name}}</a><div class="small page-sub num">{{e.assetTag}}<span ng-if="e.assignedTo"> · {{e.assignedTo.fullName}}</span></div></td>
+          <td>{{e.type | humanize}}</td><td>{{e.department.name}}</td><td><fc-pill value="{{e.status}}"></fc-pill></td>
+          <td ng-class="{'text-danger': e.maintenanceOverdue}">{{e.nextMaintenanceDue | date:'mediumDate'}}<span ng-if="e.maintenanceOverdue"> (overdue)</span></td>
+          <td class="text-end text-nowrap">
+            <button class="btn btn-sm btn-outline-primary" ng-if="vm.canAllocate && e.status === 'available'" ng-click="vm.allocate(e)">Allocate</button>
+            <button class="btn btn-sm btn-outline-primary" ng-if="vm.canAllocate && e.status === 'in_use'" ng-click="vm.release(e)">Release</button>
+            <button class="btn btn-sm btn-outline-secondary" ng-if="vm.canWrite && e.status === 'available'" ng-click="vm.maint(e, 'maintenance', 'open')">Send to maintenance</button>
+            <button class="btn btn-sm btn-outline-secondary" ng-if="vm.canWrite && e.status === 'maintenance'" ng-click="vm.maint(e, 'repair', 'completed')">Complete</button>
+            <button class="btn btn-sm btn-outline-secondary" ng-if="vm.canWrite && e.status !== 'in_use'" ng-click="vm.maint(e, 'inspection', 'completed')">Record inspection</button>
+          </td>
+        </tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-xl-4" ng-if="vm.selected">
+    <div class="panel p-3">
+      <div class="d-flex justify-content-between"><h2 class="h6">{{vm.selected.assetTag}} history</h2><button class="btn-close" ng-click="vm.selected = null"></button></div>
+      <div ng-repeat="r in vm.records" class="border-bottom py-2 small">
+        <fc-pill value="{{r.status === 'open' ? 'warning' : 'ok'}}" label="{{r.kind}} · {{r.status}}"></fc-pill>
+        <div>{{r.notes}}</div><div class="page-sub">{{r.performedBy}} · {{r.performedAt | date:'short'}}</div>
+      </div>
+      <div ng-if="!vm.records.length" class="small page-sub">No records.</div>
+    </div>
+  </div>
+</div>

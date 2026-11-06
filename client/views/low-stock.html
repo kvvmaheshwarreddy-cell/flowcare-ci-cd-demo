@@ -1,0 +1,15 @@
+<h1 class="h2">Low stock</h1>
+<p class="page-sub">Items at or below their reorder threshold, based on usable stock only.</p>
+<div class="panel table-responsive">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>Item</th><th>Department</th><th>Available</th><th>Reorder at</th><th>Safety stock</th><th>Suggested order</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr ng-repeat="i in vm.items">
+        <td><a href="/inventory/items/{{i._id}}" class="fw-medium">{{i.name}}</a></td><td>{{i.department.name}}</td>
+        <td class="num">{{i.summary.available}} {{i.unit}}</td><td class="num">{{i.reorderThreshold}}</td><td class="num">{{i.safetyStock}}</td>
+        <td class="num">{{i.summary.reorderQuantity}}</td><td><fc-pill value="{{i.summary.status}}"></fc-pill></td>
+      </tr>
+      <tr ng-if="!vm.items.length"><td colspan="7" class="text-center py-4 page-sub">Nothing is low.</td></tr>
+    </tbody>
+  </table>
+</div>

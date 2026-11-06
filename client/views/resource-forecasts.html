@@ -1,0 +1,43 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div>
+    <h1 class="h2 mb-0">Resource demand forecasts</h1>
+    <p class="page-sub mb-0">{{vm.f.generatedAt ? 'Generated ' + (vm.f.generatedAt | date:'medium') : 'No forecasts yet — click Generate.'}}</p>
+  </div>
+  <div class="d-flex gap-2">
+    <select class="form-select w-auto" ng-model="vm.horizon" ng-options="h as (h + '-day horizon') for h in [7, 14, 30]"></select>
+    <button class="btn btn-primary" ng-click="vm.generate()" ng-disabled="vm.busy">{{vm.busy ? 'Generating…' : 'Generate forecasts'}}</button>
+  </div>
+</div>
+
+<div class="panel p-3 mb-3" ng-if="vm.f.ventilators">
+  <h2 class="h6">Ventilator capacity vs workload</h2>
+  <div class="small">
+    {{vm.f.ventilators.operational}} of {{vm.f.ventilators.total}} operational · {{vm.f.ventilators.free}} free · {{vm.f.ventilators.inMaintenance}} in maintenance ·
+    expected demand {{vm.f.ventilators.expectedDemand}} (admitted critical/urgent patients)
+    <fc-pill value="{{vm.f.ventilators.shortage ? 'critical' : 'ok'}}" label="{{vm.f.ventilators.shortage ? 'shortage' : 'sufficient'}}"></fc-pill>
+  </div>
+</div>
+
+<div class="panel table-responsive">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>Resource</th><th>Available</th><th>Avg/day</th><th>Predicted demand</th><th>95% range</th><th>Coverage</th><th>Back-test</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr ng-repeat="f in vm.f.consumables">
+        <td class="fw-medium">{{f.resourceName}}<div class="small page-sub">{{f.category | humanize}} · {{f.historyDays}} days history</div></td>
+        <td class="num">{{f.available}} {{f.unit}}</td>
+        <td colspan="6" ng-if="f.insufficientData" class="small page-sub"><fc-pill value="normal" label="insufficient data"></fc-pill> {{f.note}}</td>
+        <td class="num" ng-if="!f.insufficientData">{{f.avgDaily}}</td>
+        <td class="num" ng-if="!f.insufficientData">{{f.predictedDemand}} <span class="small page-sub">/ {{f.horizonDays}}d</span></td>
+        <td class="num small" ng-if="!f.insufficientData">{{f.lower}}–{{f.upper}}</td>
+        <td class="num" ng-if="!f.insufficientData">{{f.coverageDays}} d</td>
+        <td class="small" ng-if="!f.insufficientData"><span ng-if="f.evaluation">MAE {{f.evaluation.mae}}<span ng-if="f.evaluation.mape !== null"> · MAPE {{f.evaluation.mape}}%</span></span><span ng-if="!f.evaluation">—</span></td>
+        <td ng-if="!f.insufficientData"><fc-pill value="{{f.expectedShortage ? 'high' : 'ok'}}" label="{{f.expectedShortage ? 'forecast shortage' : 'ok'}}"></fc-pill><div class="small page-sub">{{f.recommendedAction}}</div></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p class="small page-sub mt-3">
+  Method: blended moving average (60% last 7 days, 40% last 28 days) with day-of-week factors. The range is ±1.96 × daily standard deviation × √horizon.
+  Back-test: the last 7 days are predicted from earlier data and compared to what actually happened (MAE = mean absolute error, MAPE = mean absolute percentage error).
+  Items with fewer than 14 days of history are not forecast.
+</p>

@@ -1,0 +1,17 @@
+<h1 class="h2">Inventory transactions</h1>
+<p class="page-sub">Append-only history. Entries cannot be edited or deleted.</p>
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <select class="form-select w-auto" ng-model="vm.filter.type" ng-change="vm.load()"><option value="">All types</option><option>receipt</option><option>issue</option><option>transfer</option><option>adjustment</option><option value="status_change">status change</option></select>
+  <input class="form-control w-auto" type="date" ng-model="vm.filter.from" ng-change="vm.load()" />
+  <input class="form-control w-auto" type="date" ng-model="vm.filter.to" ng-change="vm.load()" />
+</div>
+<div class="panel table-responsive">
+  <table class="table table-sm mb-0 align-middle">
+    <thead><tr><th>ID</th><th>When</th><th>Item</th><th>Type</th><th>Qty</th><th>Batch</th><th>From → To</th><th>By</th><th>Reason</th></tr></thead>
+    <tbody><tr ng-repeat="t in vm.txns">
+      <td class="small num">{{t.txnId}}</td><td class="small">{{t.timestamp | date:'short'}}</td><td>{{t.item.name}}</td>
+      <td><fc-pill value="normal" label="{{t.type | humanize}}"></fc-pill></td><td class="num">{{t.quantity}} {{t.unit}}</td><td class="small">{{t.batchNo}}</td>
+      <td class="small">{{t.sourceLocation}} <span ng-if="t.destinationLocation">→ {{t.destinationLocation}}</span></td><td class="small">{{t.userName}}</td><td class="small">{{t.reason}} {{t.reference}}</td>
+    </tr></tbody>
+  </table>
+</div>

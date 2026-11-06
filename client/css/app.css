@@ -1,0 +1,60 @@
+:root {
+  --fc-bg: #f8f7f2;
+  --fc-ink: #13232e;
+  --fc-teal: #0f6f73;
+  --fc-teal-2: #3aa6a3;
+  --fc-coral: #e0734f;
+  --fc-amber: #e5a823;
+  --fc-red: #c9453a;
+  --fc-green: #2f9466;
+  --fc-side: #18303b;
+  --fc-border: #e5e2d8;
+  --bs-body-font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  --bs-primary: var(--fc-teal);
+  --bs-primary-rgb: 15, 111, 115;
+  --bs-link-color: var(--fc-teal);
+}
+body { background: var(--fc-bg); color: var(--fc-ink); }
+h1, h2, h3, h4, h5, .brand, .num { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.02em; }
+.num { font-variant-numeric: tabular-nums; }
+.btn-primary { --bs-btn-bg: var(--fc-teal); --bs-btn-border-color: var(--fc-teal); --bs-btn-hover-bg: #0b5a5d; --bs-btn-hover-border-color: #0b5a5d; }
+.btn-outline-primary { --bs-btn-color: var(--fc-teal); --bs-btn-border-color: var(--fc-teal); --bs-btn-hover-bg: var(--fc-teal); --bs-btn-hover-border-color: var(--fc-teal); }
+
+.app-shell { min-height: 100vh; }
+.min-w-0 { min-width: 0; }
+.sidebar { background: var(--fc-side); color: #cfe3e3; width: 250px; padding: 1rem; position: sticky; top: 0; height: 100vh; }
+nav.navbar.sidebar { width: auto; height: auto; position: static; }
+aside.sidebar { flex-shrink: 0; }
+.offcanvas.sidebar { position: fixed; top: 0; height: 100vh; }
+.brand { color: #fff; font-weight: 600; font-size: 1.15rem; display: flex; align-items: center; gap: .5rem; }
+.brand-mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--fc-teal-2); color: var(--fc-side); font-weight: 700; }
+.nav-section { text-transform: uppercase; font-size: .7rem; letter-spacing: .08em; opacity: .55; margin: 1rem .5rem .35rem; }
+.side-link { display: flex; gap: .6rem; align-items: center; padding: .42rem .6rem; border-radius: 8px; color: #cfe3e3; text-decoration: none; font-size: .9rem; }
+.side-link:hover, .side-link.active { background: rgba(255,255,255,.08); color: #fff; }
+.sidebar-user { border-top: 1px solid rgba(255,255,255,.12); padding-top: .75rem; }
+
+.panel { background: #fff; border: 1px solid var(--fc-border); border-radius: 14px; box-shadow: 0 1px 2px rgba(19,35,46,.04), 0 8px 24px -12px rgba(19,35,46,.12); }
+.stat .label { color: #66737c; font-size: .85rem; }
+.stat .value { font-size: 1.9rem; font-weight: 600; }
+.stat .hint { color: #66737c; font-size: .75rem; }
+.page-sub { color: #66737c; }
+.table > :not(caption) > * > * { padding: .65rem .9rem; }
+.table thead th { color: #66737c; font-weight: 500; font-size: .85rem; border-bottom-color: var(--fc-border); }
+
+.pill { display: inline-block; padding: .15rem .6rem; border-radius: 999px; font-size: .75rem; font-weight: 500; text-transform: capitalize; border: 1px solid transparent; }
+.pill-critical, .pill-out, .pill-quarantined, .pill-damaged, .pill-expired, .pill-out_of_service { background: #fbe9e6; color: var(--fc-red); border-color: #f3cfc9; }
+.pill-high, .pill-urgent, .pill-warning, .pill-low-stock, .pill-cleaning, .pill-refilling, .pill-maintenance, .pill-medium { background: #fdf3dc; color: #8a5d00; border-color: #f4e0ac; }
+.pill-ok, .pill-available, .pill-full, .pill-usable, .pill-received, .pill-admitted { background: #e3f3ea; color: var(--fc-green); border-color: #c4e5d2; }
+.pill-occupied, .pill-in_use, .pill-in_consultation, .pill-ordered, .pill-approved, .pill-forecasted { background: #e2f0f0; color: var(--fc-teal); border-color: #c4e0e0; }
+.pill-normal, .pill-info, .pill-draft, .pill-waiting, .pill-confirmed, .pill-empty, .pill-routine { background: #efeee8; color: #4d5960; }
+
+.bed-tile { border-radius: 10px; border: 1px solid var(--fc-border); padding: .45rem .55rem; font-size: .75rem; cursor: pointer; }
+.bed-available { background: #e3f3ea; border-color: #b9e0c9; }
+.bed-occupied { background: #e2f0f0; border-color: #bcdcdc; }
+.bed-cleaning { background: #fdf3dc; border-color: #f0d995; }
+.bed-maintenance { background: #efeee8; }
+
+.cat-card { cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.cat-card:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -16px rgba(19,35,46,.35); }
+.login-wrap { min-height: 100vh; display: grid; place-items: center; background: radial-gradient(120% 90% at 0% 0%, #d6efed 0%, transparent 55%), radial-gradient(90% 80% at 100% 100%, #fbe3d6 0%, transparent 60%), var(--fc-bg); }
+.chart-box { position: relative; height: 260px; }

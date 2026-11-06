@@ -1,0 +1,35 @@
+<h1 class="h2">Dashboard</h1>
+<p class="page-sub">Live patient flow and resources across the hospital.</p>
+<div ng-if="!vm.d" class="text-center py-5 page-sub">Loading…</div>
+<div ng-if="vm.d">
+  <div class="row g-3">
+    <div class="col-6 col-xl-3"><div class="panel stat p-3"><div class="label">Patients waiting</div><div class="value num">{{vm.d.totals.waiting}}</div><div class="hint">{{vm.d.totals.criticalWaiting}} critical</div></div></div>
+    <div class="col-6 col-xl-3"><div class="panel stat p-3"><div class="label">Beds available</div><div class="value num">{{vm.d.totals.bedsAvailable}}/{{vm.d.totals.bedsTotal}}</div></div></div>
+    <div class="col-6 col-xl-3"><div class="panel stat p-3"><div class="label">Staff on duty</div><div class="value num">{{vm.d.totals.staffOnDuty}}</div><div class="hint">of {{vm.d.totals.staffTotal}}</div></div></div>
+    <div class="col-6 col-xl-3"><div class="panel stat p-3"><div class="label">Longest est. wait</div><div class="value num">{{vm.d.totals.longestWait.minutes || 0}}m</div><div class="hint">{{vm.d.totals.longestWait.department}}</div></div></div>
+  </div>
+  <div class="row g-3 mt-1">
+    <div class="col-xl-7"><div class="panel p-3 h-100">
+      <h2 class="h6">Demand vs capacity — next 3 hours</h2>
+      <div class="chart-box"><canvas fc-chart="vm.chart"></canvas></div>
+    </div></div>
+    <div class="col-xl-5"><div class="panel p-3 h-100">
+      <div class="d-flex justify-content-between"><h2 class="h6">Recommendations</h2><a href="/forecast" class="small">All</a></div>
+      <div ng-repeat="r in vm.d.recommendations | limitTo:5" class="border rounded p-2 mb-2">
+        <fc-pill value="{{r.severity}}"></fc-pill> <strong class="small">{{r.title}}</strong>
+        <div class="small page-sub">{{r.detail}}</div>
+      </div>
+      <div ng-if="!vm.d.recommendations.length" class="small page-sub">All departments within capacity.</div>
+    </div></div>
+  </div>
+  <div class="panel mt-3 table-responsive">
+    <table class="table mb-0 align-middle">
+      <thead><tr><th>Department</th><th>Waiting</th><th>Est. wait</th><th>Doctors</th><th>Nurses</th><th>Beds free</th><th>Occupancy</th><th>Load</th></tr></thead>
+      <tbody><tr ng-repeat="s in vm.d.departments">
+        <td class="fw-medium">{{s.department.name}}</td><td class="num">{{s.waiting}}</td><td class="num">{{s.waitMinutes}}m</td>
+        <td class="num">{{s.doctors}}</td><td class="num">{{s.nurses}}</td><td class="num">{{s.bedsAvailable}}/{{s.bedsTotal}}</td>
+        <td class="num">{{s.occupancy * 100 | number:0}}%</td><td><fc-pill value="{{vm.loadTone(s.load)}}" label="{{s.load * 100 | number:0}}%"></fc-pill></td>
+      </tr></tbody>
+    </table>
+  </div>
+</div>

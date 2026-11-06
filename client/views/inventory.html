@@ -1,0 +1,40 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Inventory</h1><p class="page-sub mb-0">Available = usable stock (not expired, quarantined or damaged) minus reserved.</p></div>
+  <button class="btn btn-primary" ng-if="vm.canManage" ng-click="vm.showForm = !vm.showForm"><i class="bi bi-plus"></i> Register item</button>
+</div>
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <select class="form-select w-auto" ng-model="vm.filter.category" ng-change="vm.load()" ng-options="c.code as c.name for c in vm.categories"><option value="">All categories</option></select>
+  <select class="form-select w-auto" ng-model="vm.filter.department" ng-change="vm.load()" ng-options="d._id as d.name for d in vm.departments"><option value="">All departments</option></select>
+  <select class="form-select w-auto" ng-model="vm.filter.status" ng-change="vm.load()"><option value="">Any stock status</option><option value="ok">OK</option><option value="low">Low</option><option value="critical">Critical</option><option value="out">Out</option></select>
+</div>
+<form class="panel p-3 mb-3" ng-if="vm.showForm" ng-submit="vm.add()">
+  <div class="row g-2">
+    <div class="col-md-2"><label class="form-label small">SKU</label><input class="form-control" ng-model="vm.form.sku" required /></div>
+    <div class="col-md-4"><label class="form-label small">Name</label><input class="form-control" ng-model="vm.form.name" required /></div>
+    <div class="col-md-3"><label class="form-label small">Category</label><select class="form-select" ng-model="vm.form.category" required ng-options="c.code as c.name for c in vm.categories"></select></div>
+    <div class="col-md-3"><label class="form-label small">Unit</label><input class="form-control" ng-model="vm.form.unit" placeholder="vial, bag, box…" required /></div>
+    <div class="col-md-3"><label class="form-label small">Department</label><select class="form-select" ng-model="vm.form.department" ng-options="d._id as d.name for d in vm.departments"></select></div>
+    <div class="col-md-2"><label class="form-label small">Criticality</label><select class="form-select" ng-model="vm.form.criticality"><option>essential</option><option>important</option><option>routine</option></select></div>
+    <div class="col-md-2"><label class="form-label small">Reorder at</label><input class="form-control" type="number" min="0" ng-model="vm.form.reorderThreshold" /></div>
+    <div class="col-md-2"><label class="form-label small">Safety stock</label><input class="form-control" type="number" min="0" ng-model="vm.form.safetyStock" /></div>
+    <div class="col-md-2"><label class="form-label small">Lead time (days)</label><input class="form-control" type="number" min="0" ng-model="vm.form.leadTimeDays" /></div>
+    <div class="col-md-1 d-flex align-items-end"><div class="form-check"><input class="form-check-input" type="checkbox" ng-model="vm.form.restricted" id="r" /><label class="form-check-label small" for="r">Restricted</label></div></div>
+  </div>
+  <button class="btn btn-primary mt-3">Save item</button>
+</form>
+<div class="panel table-responsive">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>Item</th><th>Category</th><th>Department</th><th>Available</th><th>Unusable</th><th>Avg/day</th><th>Coverage</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr ng-repeat="i in vm.items">
+        <td><a href="/inventory/items/{{i._id}}" class="fw-medium">{{i.name}}</a><div class="small page-sub">{{i.sku}} <span ng-if="i.restricted" class="badge text-bg-secondary">restricted</span></div></td>
+        <td>{{i.category | humanize}}</td><td>{{i.department.name}}</td>
+        <td class="num">{{i.summary.available}} {{i.unit}}</td><td class="num">{{i.summary.unusable}}</td>
+        <td class="num">{{i.summary.avgDaily}}</td>
+        <td class="num">{{i.summary.coverageDays !== null ? i.summary.coverageDays + ' d' : 'insufficient data'}}</td>
+        <td><fc-pill value="{{i.summary.status}}"></fc-pill></td>
+      </tr>
+      <tr ng-if="!vm.items.length"><td colspan="8" class="text-center py-4 page-sub">No items.</td></tr>
+    </tbody>
+  </table>
+</div>

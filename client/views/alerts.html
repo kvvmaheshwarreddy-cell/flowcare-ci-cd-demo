@@ -1,0 +1,19 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Alerts</h1><p class="page-sub mb-0">"Confirmed" comes from actual records; "forecasted" comes from predictions and is never marked critical on its own.</p></div>
+  <select class="form-select w-auto" ng-model="vm.filter.severity" ng-change="vm.load()"><option value="">All severities</option><option>critical</option><option>high</option><option>medium</option><option>low</option></select>
+</div>
+<div class="panel p-3 mb-2" ng-repeat="a in vm.alerts">
+  <div class="d-flex justify-content-between gap-2">
+    <div>
+      <fc-pill value="{{a.severity}}"></fc-pill> <fc-pill value="{{a.kind}}"></fc-pill>
+      <strong class="ms-1">{{a.title}}</strong>
+      <div class="small page-sub mt-1">{{a.detail}}</div>
+      <div class="small mt-1" ng-if="a.metrics"><span class="me-2 page-sub" ng-repeat="(k, v) in a.metrics" ng-if="v !== null && k !== 'recordedAt'">{{k}}: <span class="num">{{v}}</span></span></div>
+    </div>
+    <div class="text-end text-nowrap">
+      <span class="small page-sub" ng-if="a.status === 'acknowledged'">Acknowledged</span>
+      <button class="btn btn-sm btn-outline-secondary" ng-if="a.status === 'open'" ng-click="vm.ack(a)">Acknowledge</button>
+    </div>
+  </div>
+</div>
+<div ng-if="!vm.alerts.length" class="text-center py-5 page-sub">No open alerts.</div>

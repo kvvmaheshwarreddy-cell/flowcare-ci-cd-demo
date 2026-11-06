@@ -1,0 +1,78 @@
+<div ng-if="vm.item">
+  <a href="/inventory" class="small"><i class="bi bi-arrow-left"></i> Inventory</a>
+  <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mt-2 mb-3">
+    <div><h1 class="h2 mb-0">{{vm.item.name}}</h1><p class="page-sub mb-0">{{vm.item.sku}} · {{vm.item.category | humanize}} · {{vm.item.criticality}}<span ng-if="vm.item.medicine.genericName"> · {{vm.item.medicine.genericName}}</span></p></div>
+    <fc-pill value="{{vm.item.summary.status}}"></fc-pill>
+  </div>
+  <div class="row g-3">
+    <div class="col-6 col-xl-2" ng-repeat="c in [['On hand', vm.item.summary.onHand], ['Usable', vm.item.summary.usable], ['Unusable', vm.item.summary.unusable], ['Reserved', vm.item.summary.reserved], ['Available', vm.item.summary.available], ['Incoming', vm.item.summary.incoming]]">
+      <div class="panel stat p-3"><div class="label">{{c[0]}}</div><div class="value num">{{c[1]}}</div><div class="hint">{{vm.item.unit}}</div></div>
+    </div>
+  </div>
+  <p class="small page-sub mt-2">
+    Average use {{vm.item.summary.avgDaily}}/day over {{vm.item.summary.historyDays}} days ·
+    Coverage: {{vm.item.summary.coverageDays !== null ? vm.item.summary.coverageDays + ' days' : 'not shown (needs 14+ days of history)'}} ·
+    Suggested reorder: <strong>{{vm.item.summary.reorderQuantity}} {{vm.item.unit}}</strong>
+  </p>
+
+  <div class="row g-3">
+    <div class="col-xl-8">
+      <div class="panel table-responsive">
+        <table class="table mb-0 align-middle">
+          <thead><tr><th>Batch</th><th>Location</th><th>Qty</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+          <tbody><tr ng-repeat="b in vm.item.batches">
+            <td class="num">{{b.batchNo}}</td><td>{{b.location}}</td><td class="num">{{b.quantity}}</td>
+            <td>{{b.expiryDate ? (b.expiryDate | date:'mediumDate') : '—'}}</td>
+            <td><fc-pill value="{{b.usable ? 'usable' : (b.status === 'usable' ? 'expired' : b.status)}}"></fc-pill></td>
+            <td class="text-end text-nowrap" ng-if="vm.canManage">
+              <button class="btn btn-sm btn-outline-secondary" ng-if="b.status === 'usable'" ng-click="vm.setStatus(b, 'quarantined')">Quarantine</button>
+              <button class="btn btn-sm btn-outline-secondary" ng-if="b.status !== 'usable'" ng-click="vm.setStatus(b, 'usable')">Release</button>
+            </td><td ng-if="!vm.canManage"></td>
+          </tr></tbody>
+        </table>
+      </div>
+      <h2 class="h6 mt-4">Recent transactions</h2>
+      <div class="panel table-responsive">
+        <table class="table table-sm mb-0">
+          <thead><tr><th>When</th><th>Type</th><th>Qty</th><th>Batch</th><th>From → To</th><th>By</th><th>Reason</th></tr></thead>
+          <tbody><tr ng-repeat="t in vm.item.transactions">
+            <td class="small">{{t.timestamp | date:'short'}}</td><td><fc-pill value="normal" label="{{t.type | humanize}}"></fc-pill></td><td class="num">{{t.quantity}}</td>
+            <td class="small">{{t.batchNo}}</td><td class="small">{{t.sourceLocation}} <span ng-if="t.destinationLocation">→ {{t.destinationLocation}}</span></td>
+            <td class="small">{{t.userName}}</td><td class="small">{{t.reason}} {{t.reference}}</td>
+          </tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col-xl-4">
+      <form class="panel p-3" ng-if="vm.canIssue" ng-submit="vm.submit()">
+        <h2 class="h6">Record a transaction</h2>
+        <select class="form-select mb-2" ng-model="vm.txn.type">
+          <option value="issue">Issue (use)</option>
+          <option value="receipt" ng-if="vm.canManage">Receipt</option>
+          <option value="transfer" ng-if="vm.canManage">Transfer</option>
+          <option value="adjustment" ng-if="vm.canManage">Adjustment (+/−)</option>
+        </select>
+        <input class="form-control mb-2" type="number" ng-model="vm.txn.quantity" placeholder="Quantity ({{vm.item.unit}})" required />
+        <div ng-if="vm.txn.type === 'receipt'">
+          <input class="form-control mb-2" ng-model="vm.txn.batchNo" placeholder="Batch number" required />
+          <input class="form-control mb-2" type="date" ng-model="vm.txn.expiryDate" />
+          <input class="form-control mb-2" ng-model="vm.txn.destinationLocation" placeholder="Location (default Main store)" />
+        </div>
+        <select class="form-select mb-2" ng-if="vm.txn.type === 'transfer' || vm.txn.type === 'adjustment'" ng-model="vm.txn.batch" ng-options="b._id as (b.batchNo + ' @ ' + b.location + ' (' + b.quantity + ')') for b in vm.item.batches" required></select>
+        <input class="form-control mb-2" ng-if="vm.txn.type === 'transfer'" ng-model="vm.txn.destinationLocation" placeholder="Destination location" required />
+        <input class="form-control mb-2" ng-model="vm.txn.reason" placeholder="Reason{{vm.txn.type === 'adjustment' ? ' (required)' : ''}}" ng-required="vm.txn.type === 'adjustment'" />
+        <input class="form-control mb-2" ng-model="vm.txn.reference" placeholder="Reference / PO (optional)" />
+        <button class="btn btn-primary w-100">Record</button>
+        <div class="small text-success mt-2" ng-if="vm.ok">{{vm.ok}}</div>
+      </form>
+      <form class="panel p-3 mt-3" ng-if="vm.canManage" ng-submit="vm.saveSettings()">
+        <h2 class="h6">Thresholds</h2>
+        <label class="small">Reorder threshold</label><input class="form-control mb-2" type="number" min="0" ng-model="vm.item.reorderThreshold" />
+        <label class="small">Safety stock</label><input class="form-control mb-2" type="number" min="0" ng-model="vm.item.safetyStock" />
+        <label class="small">Lead time (days)</label><input class="form-control mb-2" type="number" min="0" ng-model="vm.item.leadTimeDays" />
+        <label class="small">Reserved quantity</label><input class="form-control mb-2" type="number" min="0" ng-model="vm.item.reservedQuantity" />
+        <button class="btn btn-outline-primary w-100">Save thresholds</button>
+      </form>
+    </div>
+  </div>
+</div>

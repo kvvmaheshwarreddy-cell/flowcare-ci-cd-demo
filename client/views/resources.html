@@ -1,0 +1,45 @@
+<h1 class="h2">Hospital resources</h1>
+<p class="page-sub">Every figure is computed from database records. Select a category to manage it.</p>
+<div ng-if="!vm.o" class="text-center py-5 page-sub">Loading…</div>
+<div ng-if="vm.o">
+  <div class="row g-3">
+    <div class="col-6 col-md-4 col-xl" ng-repeat="c in [
+      ['Categories tracked', vm.o.cards.trackedCategories],
+      ['Low-stock items', vm.o.cards.lowStockItems],
+      ['Critical alerts', vm.o.cards.criticalAlerts],
+      ['Equipment in maintenance', vm.o.cards.equipmentUnderMaintenance],
+      ['Expired / quarantined', vm.o.cards.expiredOrQuarantinedBatches]]">
+      <div class="panel stat p-3 h-100"><div class="label">{{c[0]}}</div><div class="value num">{{c[1]}}</div></div>
+    </div>
+  </div>
+  <div class="row g-3 mt-0">
+    <div class="col-6 col-md-4 col-xl" ng-repeat="c in [
+      ['Expiring in 30 days', vm.o.cards.approachingExpiryBatches],
+      ['Predicted shortages', vm.o.cards.predictedShortages],
+      ['Pending replenishments', vm.o.cards.pendingReplenishments],
+      ['Open maintenance', vm.o.cards.openMaintenanceRequests],
+      ['Inspections due', vm.o.cards.outstandingInspections]]">
+      <div class="panel stat p-3 h-100"><div class="label">{{c[0]}}</div><div class="value num">{{c[1]}}</div></div>
+    </div>
+  </div>
+
+  <h2 class="h5 mt-4">Resource categories</h2>
+  <div class="row g-3">
+    <div class="col-6 col-md-4 col-xl-3" ng-repeat="c in vm.o.categories">
+      <div class="panel cat-card p-3 h-100" ng-click="vm.open(c)">
+        <div class="fw-semibold">{{c.name}}</div>
+        <div class="small page-sub">{{c.headline}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-2">
+    <div class="col-xl-6"><div class="panel p-3"><h3 class="h6">Inventory quantity by category</h3><div class="chart-box"><canvas fc-chart="vm.charts.qty"></canvas></div></div></div>
+    <div class="col-xl-6"><div class="panel p-3"><h3 class="h6">Monthly consumption</h3><div class="chart-box"><canvas fc-chart="vm.charts.monthly"></canvas></div></div></div>
+    <div class="col-xl-4"><div class="panel p-3"><h3 class="h6">Low-stock items by department</h3><div class="chart-box"><canvas fc-chart="vm.charts.lowDept"></canvas></div></div></div>
+    <div class="col-xl-4"><div class="panel p-3"><h3 class="h6">Equipment status</h3><div class="chart-box"><canvas fc-chart="vm.charts.equip"></canvas></div></div></div>
+    <div class="col-xl-4"><div class="panel p-3"><h3 class="h6">Open alerts by severity</h3><div class="chart-box"><canvas fc-chart="vm.charts.severity"></canvas></div></div></div>
+    <div class="col-xl-8"><div class="panel p-3"><h3 class="h6">Stock coverage vs lead time</h3><div class="chart-box" style="height:380px"><canvas fc-chart="vm.charts.coverage"></canvas></div></div></div>
+    <div class="col-xl-4"><div class="panel p-3"><h3 class="h6">Expiring inventory</h3><div class="chart-box"><canvas fc-chart="vm.charts.expiry"></canvas></div></div></div>
+  </div>
+</div>

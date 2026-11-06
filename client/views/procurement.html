@@ -1,0 +1,29 @@
+<h1 class="h2">Purchase orders</h1>
+<p class="page-sub">Reorder = demand during lead time + safety stock − available − incoming. Never below zero.</p>
+<h2 class="h6 mt-3">Replenishment recommendations</h2>
+<div class="panel table-responsive mb-4">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>Item</th><th>Status</th><th>Recommended</th><th>Why</th><th></th></tr></thead>
+    <tbody>
+      <tr ng-repeat="r in vm.recs">
+        <td class="fw-medium">{{r.item.name}}<div class="small page-sub">{{r.item.sku}} · {{r.item.supplier}}</div></td>
+        <td><fc-pill value="{{r.status}}"></fc-pill></td>
+        <td class="num">{{r.recommendedQuantity}} {{r.item.unit}}</td>
+        <td class="small page-sub">{{r.explanation}}<br />coverage {{r.metrics.coverageDays !== null ? r.metrics.coverageDays + ' d' : 'n/a'}}, history {{r.metrics.historyDays}} d</td>
+        <td class="text-end"><button class="btn btn-sm btn-outline-primary" ng-if="vm.can && r.recommendedQuantity > 0" ng-click="vm.order(r)">Create PO</button></td>
+      </tr>
+      <tr ng-if="!vm.recs.length"><td colspan="5" class="text-center py-4 page-sub">No replenishment needed.</td></tr>
+    </tbody>
+  </table>
+</div>
+<h2 class="h6">Orders</h2>
+<div class="panel table-responsive">
+  <table class="table mb-0 align-middle">
+    <thead><tr><th>PO</th><th>Item</th><th>Qty</th><th>Supplier</th><th>Expected</th><th>Status</th><th></th></tr></thead>
+    <tbody><tr ng-repeat="po in vm.pos">
+      <td class="num">{{po.poNumber}}</td><td>{{po.item.name}}</td><td class="num">{{po.quantity}} {{po.item.unit}}</td><td>{{po.supplier}}</td>
+      <td>{{po.expectedDate | date:'mediumDate'}}</td><td><fc-pill value="{{po.status}}"></fc-pill></td>
+      <td class="text-end text-nowrap"><button class="btn btn-sm btn-outline-secondary ms-1" ng-if="vm.can" ng-repeat="s in vm.next[po.status]" ng-click="vm.move(po, s)">{{s === 'received' ? 'Receive' : s === 'cancelled' ? 'Cancel' : (s | humanize)}}</button></td>
+    </tr></tbody>
+  </table>
+</div>

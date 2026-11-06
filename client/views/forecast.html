@@ -1,0 +1,28 @@
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-3">
+  <div><h1 class="h2 mb-0">Patient demand and bottlenecks</h1><p class="page-sub mb-0 small">{{vm.f.method}}</p></div>
+  <select class="form-select" style="max-width:220px" ng-model="vm.dept" ng-change="vm.draw()" ng-options="d as d.name for d in vm.f.departments"></select>
+</div>
+<div class="row g-3">
+  <div class="col-xl-8"><div class="panel p-3"><h2 class="h6">Arrivals — last 48 hours</h2><div class="chart-box"><canvas fc-chart="vm.histChart"></canvas></div></div></div>
+  <div class="col-xl-4"><div class="panel p-3"><h2 class="h6">Forecast — next 6 hours</h2><div class="chart-box"><canvas fc-chart="vm.fcChart"></canvas></div></div></div>
+</div>
+<div class="row g-3 mt-1">
+  <div class="col-xl-7"><div class="panel p-3">
+    <h2 class="h6">Recommendations</h2>
+    <div ng-repeat="r in vm.r.recommendations" class="border rounded p-2 mb-2">
+      <fc-pill value="{{r.severity}}"></fc-pill> <strong>{{r.title}}</strong>
+      <div class="small page-sub">{{r.detail}}</div>
+      <div class="small mt-1"><span class="me-2 page-sub" ng-repeat="(k, v) in r.metrics">{{k}}: <span class="num">{{v}}</span></span></div>
+    </div>
+    <div ng-if="!vm.r.recommendations.length" class="small page-sub">No action needed right now.</div>
+  </div></div>
+  <div class="col-xl-5"><div class="panel p-3">
+    <h2 class="h6">Bottlenecks</h2>
+    <div ng-repeat="b in vm.r.bottlenecks" class="mb-3">
+      <div class="d-flex justify-content-between small"><span>{{b.department.name}}</span><span class="num page-sub">{{b.waiting + b.predicted3h}} demand / {{b.capacity3h}} capacity</span></div>
+      <div class="progress" style="height:8px"><div class="progress-bar" ng-class="b.load > 1.5 ? 'bg-danger' : 'bg-warning'" ng-style="{width: (b.load > 1 ? 100 : b.load * 100) + '%'}"></div></div>
+      <div class="small page-sub">Occupancy {{b.occupancy * 100 | number:0}}% · est. wait {{b.waitMinutes}}m</div>
+    </div>
+    <div ng-if="!vm.r.bottlenecks.length" class="small page-sub">No bottlenecks detected.</div>
+  </div></div>
+</div>
